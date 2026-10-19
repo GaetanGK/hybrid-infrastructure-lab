@@ -42,7 +42,7 @@ flowchart TB
     PC["Postes d'administration"] <-->|"WireGuard"| FW
 ```
 
-*Schéma logique simplifié. Les réseaux et informations d'accès détaillés restent dans la documentation privée.*
+*Schéma logique de l'infrastructure.*
 
 ## Composants et réalisations
 
@@ -62,19 +62,19 @@ J'ai simulé l'indisponibilité du contrôleur de domaine puis restauré sa sauv
 
 Un nouveau test chronométré est prévu pour distinguer le temps de restauration, les vérifications de services et la durée totale d'indisponibilité. Aucun objectif de temps de reprise (RTO) n'est annoncé à ce stade.
 
-La procédure détaillée sera publiée dans `runbooks/reprise-controleur-domaine.md` après anonymisation.
+La procédure détaillée sera documentée dans `runbooks/reprise-controleur-domaine.md`.
 
 ## Organisation du dépôt
 
 - `docs/` : architecture, virtualisation, réseau, identité, automatisation, supervision, sauvegarde et Azure ;
 - `diagrams/` : schémas d'architecture ;
-- `ansible/` : playbooks et exemples d'inventaire expurgés ;
+- `ansible/` : playbooks et inventaires Ansible ;
 - `powershell/` : scripts d'administration ;
 - `rundeck/` : définitions de jobs exportables ;
 - `runbooks/` : procédures de maintenance et de reprise ;
-- `evidence/` : captures de tests anonymisées.
+- `evidence/` : captures et résultats des tests.
 
-Les dossiers seront alimentés progressivement avec les configurations et documents vérifiés. Les informations sensibles, clés, identifiants et adresses publiques ne sont pas publiés.
+Les dossiers seront alimentés progressivement avec les configurations, scripts et procédures du lab.
 
 ---
 
@@ -106,6 +106,6 @@ A new timed recovery test is planned to distinguish the technical restoration ti
 
 ### Repository contents
 
-The repository is organized around technical documentation (`docs/`), diagrams (`diagrams/`), automation (`ansible/`, `powershell/`, `rundeck/`), operating procedures (`runbooks/`) and anonymized test evidence (`evidence/`). Detailed technical documentation is written in French.
+The repository is organized around technical documentation (`docs/`), diagrams (`diagrams/`), automation (`ansible/`, `powershell/`, `rundeck/`), operating procedures (`runbooks/`) and test evidence (`evidence/`). Detailed technical documentation is written in French.
 
-This is a **personal lab**, not a production environment. Configurations and examples are reviewed to avoid publishing credentials or sensitive access details.
+This is a **personal lab**, not a production environment.

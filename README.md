@@ -14,32 +14,57 @@ L'infrastructure repose sur un hôte ESXi installé directement sur le matériel
 
 ```mermaid
 flowchart TB
-    Internet[Internet / box] --> ESXi
-    subgraph ESXi["Dell Latitude 5490 — VMware ESXi 8"]
-      FW["OPNsense — pare-feu / routage / WireGuard"]
-      subgraph V10["VLAN 10 — Management"]
-        AD["Windows Server 2022 — AD DS / DNS"]
-      end
-      subgraph V20["VLAN 20 — Serveurs"]
-        L1["Ubuntu Server 01"]
-        L2["Ubuntu Server 02"]
-      end
-      subgraph V30["VLAN 30 — Supervision et sauvegarde"]
-        CENT["Centreon"]
-        VEEAM["Veeam"]
-      end
-      subgraph V40["VLAN 40 — Administration"]
-        AUTO["Ansible / Rundeck"]
-      end
-      FW --- AD
-      FW --- L1
-      FW --- L2
-      FW --- CENT
-      FW --- VEEAM
-      FW --- AUTO
+    subgraph EXTERNE["Accès extérieurs"]
+        direction LR
+        PC["PC d'administration distant"]
+        AZ["Azure — VM Ubuntu"]
     end
-    FW <-->|"WireGuard site-à-site"| AZ["Azure — VM Linux"]
-    PC["Postes d'administration"] <-->|"WireGuard"| FW
+
+    NET["Internet"]
+    BOX["Freebox / Réseau domestique"]
+
+    PC -->|"WireGuard — accès distant"| NET
+    AZ -->|"WireGuard — site-à-site"| NET
+    NET --> BOX
+
+    subgraph HOST["Dell Latitude 5490 — VMware ESXi 8"]
+        direction TB
+
+        VS0["vSwitch0 — vmnic0"]
+
+        MGMT["Management Network<br/>Administration ESXi"]
+        FW["OPNsense<br/>Pare-feu · Routage · VPN WireGuard"]
+
+        VS0 --> MGMT
+        VS0 -->|"Interface WAN"| FW
+
+        VSLAB["vSwitch-Lab-Interne<br/>Aucun uplink physique"]
+
+        FW -->|"Interface LAN · VLAN 4095"| VSLAB
+
+        subgraph ZONES["Réseaux internes du lab"]
+            direction LR
+            V10["VLAN 10<br/>AD DS / DNS"]
+            V20["VLAN 20<br/>2 serveurs Linux"]
+            V30["VLAN 30<br/>Centreon / Veeam"]
+            V40["VLAN 40<br/>Ansible / Rundeck"]
+        end
+
+        VSLAB --> V10
+        VSLAB --> V20
+        VSLAB --> V30
+        VSLAB --> V40
+    end
+
+    BOX --> VS0
+
+    classDef network fill:#dbeafe,stroke:#5b8db8,color:#1e3a5f
+    classDef firewall fill:#dcfce7,stroke:#62a58b,color:#14532d
+    classDef service fill:#f1f5f9,stroke:#94a3b8,color:#334155
+
+    class NET,BOX,VS0,VSLAB network
+    class FW firewall
+    class PC,AZ,MGMT,V10,V20,V30,V40 service
 ```
 
 *Schéma logique de l'infrastructure.*

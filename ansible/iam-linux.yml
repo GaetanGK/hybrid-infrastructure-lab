@@ -1,0 +1,131 @@
+---
+# IAM Linux : jonction d'un serveur à l'Active Directory (realmd + sssd).
+#
+# Pré-requis (non modifiés par ce playbook, propres à chaque machine) :
+#   - le DNS de la machine pointe vers le contrôleur de domaine ;
+#   - le domaine DNS (champ « search » de Netplan) est rattaché à l'interface : sans lui,
+#     realm ne trouve pas l'annuaire (le suffixe .local n'est pas envoyé au serveur DNS) ;
+#   - les flux vers le contrôleur de domaine sont ouverts (88, 464, 389, 3268).
+# Le mot de passe du compte de jonction est demandé à l'exécution et n'est jamais écrit.
+- name: IAM Linux - jonction d'un serveur à l'Active Directory
+  hosts: srv-lin-02
+  become: yes
+
+  vars:
+    ad_domain: homelab.local
+    ad_computer_ou: "OU=Serveurs-Linux,OU=Lab,DC=homelab,DC=local"
+    ad_join_user: Administrateur
+    ad_admin_group: linux-admins@homelab.local
+    ad_interface: ens34
+
+  vars_prompt:
+    - name: ad_join_password
+      prompt: "Mot de passe du compte de jonction"
+      private: yes
+
+  tasks:
+    - name: Lire le domaine DNS rattaché à l'interface
+      command: "resolvectl domain {{ ad_interface }}"
+      register: dns_domain
+      changed_when: false
+      check_mode: no
+
+    - name: Vérifier que le résolveur sait atteindre l'annuaire
+      assert:
+        that:
+          - ad_domain in dns_domain.stdout
+        fail_msg: >-
+          Le domaine {{ ad_domain }} n'est pas rattaché à l'interface {{ ad_interface }}.
+          realm ne trouvera pas l'annuaire : corriger d'abord la configuration réseau
+          de la machine (champ search de Netplan), puis relancer.
+        success_msg: "Domaine DNS présent sur {{ ad_interface }}."
+
+    - name: Installer les paquets d'intégration AD
+      apt:
+        name:
+          - realmd
+          - sssd
+          - sssd-tools
+          - libnss-sss
+          - libpam-sss
+          - adcli
+          - samba-common-bin
+          - oddjob
+          - oddjob-mkhomedir
+          - packagekit
+        state: present
+        update_cache: yes
+
+    - name: Lire l'état du domaine
+      command: realm list
+      register: realm_state
+      changed_when: false
+      failed_when: false
+      check_mode: no
+
+    - name: Joindre le domaine
+      command: >
+        realm join --unattended --computer-ou="{{ ad_computer_ou }}"
+        -U {{ ad_join_user }} {{ ad_domain }}
+      args:
+        stdin: "{{ ad_join_password }}"
+      register: join_result
+      failed_when: false
+      no_log: true
+      when: "'kerberos-member' not in realm_state.stdout"
+
+    - name: Arrêter si la jonction a échoué
+      fail:
+        msg: "La jonction Active Directory a échoué. Vérifier le DNS et les journaux sur la machine cible."
+      when: join_result.rc | default(0) != 0
+
+    - name: Relire l'état du domaine
+      command: realm list
+      register: realm_after
+      changed_when: false
+      failed_when: false
+      check_mode: no
+
+    - name: Chercher le profil mkhomedir
+      command: grep -q pam_mkhomedir /etc/pam.d/common-session
+      register: mkhomedir_state
+      changed_when: false
+      failed_when: false
+      check_mode: no
+
+    - name: Activer la création du dossier personnel
+      command: pam-auth-update --enable mkhomedir
+      when: mkhomedir_state.rc != 0
+
+    - name: Interdire les connexions AD par défaut
+      command: realm deny --all
+      when: "'allow-permitted-logins' not in realm_after.stdout"
+
+    - name: Autoriser le groupe des administrateurs Linux
+      command: "realm permit -g {{ ad_admin_group }}"
+      when: ad_admin_group not in realm_after.stdout
+
+    - name: Droit sudo du groupe des administrateurs Linux
+      copy:
+        dest: /etc/sudoers.d/linux-admins
+        content: "%{{ ad_admin_group }} ALL=(ALL:ALL) ALL\n"
+        owner: root
+        group: root
+        mode: '0440'
+        validate: "visudo -cf %s"
+
+    - name: Lire l'état final
+      command: realm list
+      register: realm_final
+      changed_when: false
+      check_mode: no
+      when: not ansible_check_mode
+
+    - name: Contrôle final
+      assert:
+        that:
+          - "'kerberos-member' in realm_final.stdout"
+          - "'allow-permitted-logins' in realm_final.stdout"
+          - ad_admin_group in realm_final.stdout
+        success_msg: "Machine jointe, connexions limitées au groupe des administrateurs."
+      when: not ansible_check_mode

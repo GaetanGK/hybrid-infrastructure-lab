@@ -4,6 +4,10 @@
 
 J'ai installé Active Directory Domain Services (AD DS) et DNS sur Windows Server 2022, avec le domaine `homelab.local`. J'ai ensuite joint deux serveurs Ubuntu Server 24.04 à l'annuaire afin d'utiliser des comptes AD pour les connexions SSH et de déléguer les droits `sudo` à un groupe.
 
+### Pourquoi intégrer Linux à Active Directory ?
+
+J'ai choisi d'utiliser une même source d'identités pour les machines Windows et Linux du lab. Cela m'a permis de tester la résolution des comptes AD avec SSSD, le contrôle de l'accès SSH par groupe et la délégation de `sudo`, plutôt que de gérer séparément les comptes d'administration de chaque serveur. La désactivation d'un compte AD a également été testée sur les nouvelles connexions SSH. Des comptes locaux de secours restent indépendants de l'annuaire.
+
 | Machine | Rôle |
 | --- | --- |
 | `HOMELAB` | Contrôleur de domaine et DNS ; exécution du script PowerShell |

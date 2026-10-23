@@ -81,25 +81,36 @@ flowchart TB
 | Sauvegarde | Veeam, sauvegardes planifiées et points de restauration |
 | Cloud hybride | VM Linux Azure reliée au lab par un tunnel WireGuard |
 
+## Documentation technique
+
+- [Architecture générale](docs/architecture.md)
+- [Virtualisation — VMware ESXi](docs/virtualisation.md)
+- [Réseau et sécurité — OPNsense](docs/reseau-securite.md)
+- [Active Directory et intégration Linux](docs/active-directory.md)
+- [VPN WireGuard — administration distante et liaison Azure](docs/vpn-wireguard.md)
+
+Les autres volets techniques seront ajoutés progressivement : Azure, Ansible, Rundeck, Centreon, Veeam et la procédure de reprise du contrôleur de domaine.
+
 ## Test de reprise du contrôleur de domaine
 
 J'ai simulé l'indisponibilité du contrôleur de domaine puis restauré sa sauvegarde sur une nouvelle machine virtuelle avec Veeam. Après le redémarrage, j'ai vérifié les services Active Directory et DNS, puis l'authentification d'un compte du domaine sur un serveur Linux et ses droits `sudo`.
 
-Un nouveau test chronométré est prévu pour distinguer le temps de restauration, les vérifications de services et la durée totale d'indisponibilité. Aucun objectif de temps de reprise (RTO) n'est annoncé à ce stade.
+Un nouveau test chronométré est prévu pour distinguer le temps de restauration, les vérifications de services et la durée totale d’indisponibilité. Aucun objectif de temps de reprise (RTO) n’est annoncé à ce stade.
 
-La procédure détaillée sera documentée dans `runbooks/reprise-controleur-domaine.md`.
+La procédure détaillée sera publiée dans `runbooks/reprise-controleur-domaine.md` après anonymisation.
 
 ## Organisation du dépôt
 
-- `docs/` : architecture, virtualisation, réseau, identité, automatisation, supervision, sauvegarde et Azure ;
-- `diagrams/` : schémas d'architecture ;
-- `ansible/` : playbooks et inventaires Ansible ;
-- `powershell/` : scripts d'administration ;
-- `rundeck/` : définitions de jobs exportables ;
-- `runbooks/` : procédures de maintenance et de reprise ;
-- `evidence/` : captures et résultats des tests.
+Les fichiers actuellement publiés sont organisés dans les dossiers suivants :
 
-Les dossiers seront alimentés progressivement avec les configurations, scripts et procédures du lab.
+- `docs/` : documentation technique de l'architecture et des services ;
+- `images/` : captures d'écran réelles sélectionnées pour illustrer les configurations et les tests ;
+- `ansible/` : playbooks d'automatisation ;
+- `powershell/` : scripts d'administration Windows et Active Directory.
+
+La structure sera enrichie progressivement avec des définitions de jobs Rundeck, des procédures de reprise dans `runbooks/` et, si nécessaire, des schémas complémentaires dans `diagrams/`.
+
+Les informations sensibles, clés, identifiants et adresses publiques ne sont pas publiés.
 
 ---
 
@@ -131,6 +142,8 @@ A new timed recovery test is planned to distinguish the technical restoration ti
 
 ### Repository contents
 
-The repository is organized around technical documentation (`docs/`), diagrams (`diagrams/`), automation (`ansible/`, `powershell/`, `rundeck/`), operating procedures (`runbooks/`) and test evidence (`evidence/`). Detailed technical documentation is written in French.
+The repository currently contains technical documentation (`docs/`), real screenshots (`images/`), Ansible playbooks (`ansible/`) and PowerShell administration scripts (`powershell/`).
 
-This is a **personal lab**, not a production environment.
+Additional documentation and operational resources, including Rundeck job definitions and recovery runbooks, will be added progressively. Detailed technical documentation is written in French.
+
+This is a **personal lab**, not a production environment. Configurations and examples are reviewed to avoid publishing credentials or sensitive access details.

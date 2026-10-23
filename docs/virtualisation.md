@@ -4,6 +4,12 @@
 
 J'ai installé VMware ESXi 8 directement sur un Dell Latitude 5490 dédié à mon infrastructure.
 
+### Pourquoi ESXi en bare-metal ?
+
+J'ai préféré installer l'hyperviseur directement sur un Dell Latitude 5490 dédié plutôt que d'utiliser une virtualisation imbriquée sur mon poste principal. Ce choix me permet d'administrer un véritable hyperviseur et ses commutateurs virtuels, tout en laissant mon PC disponible pour piloter le lab.
+
+Ce choix implique un point de défaillance unique et des ressources matérielles limitées : il s'agit d'un environnement d'apprentissage, et non d'une plateforme de production.
+
 L'hyperviseur héberge sept machines virtuelles : un contrôleur de domaine Windows Server, deux serveurs Ubuntu, un pare-feu OPNsense, Centreon, Veeam et un serveur d'administration Ansible/Rundeck.
 
 J'ai organisé le réseau virtuel autour de deux commutateurs :

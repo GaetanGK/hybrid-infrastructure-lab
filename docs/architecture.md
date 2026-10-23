@@ -59,7 +59,7 @@ J'ai organisé les machines virtuelles en quatre VLAN afin de séparer les fonct
 
 Le réseau interne est organisé en quatre VLAN, chacun correspondant à un ensemble de services. Leurs communications passent par OPNsense, qui applique les règles de filtrage entre les zones.
 
-Le plan d'adressage, les protocoles et les règles de pare-feu seront détaillés séparément dans la documentation réseau.
+Le plan d'adressage, les protocoles et les règles de pare-feu sont détaillés dans [Réseau et sécurité — OPNsense](reseau-securite.md).
 
 ### Rôle d'OPNsense
 
@@ -170,19 +170,15 @@ Ces contraintes font partie des éléments pris en compte dans l'organisation et
 
 Les différents composants ont été vérifiés à travers des tests de connectivité, d'authentification, d'administration et de restauration.
 
-Les documents du dépôt présenteront les configurations mises en œuvre, les commandes utilisées pour les vérifier et les résultats observés.
+Les documents du dépôt présentent les configurations mises en œuvre, les commandes utilisées pour les vérifier et les résultats observés.
 
-Les scripts, extraits de configuration et captures d'écran seront sélectionnés pour illustrer les opérations réellement effectuées sur le lab.
+Les scripts, extraits de configuration et captures d'écran sont sélectionnés pour illustrer les opérations réellement effectuées sur le lab.
 
-## 10. Évolutions de la documentation
+## 10. Documentation associée
 
-Les autres fichiers du dépôt détailleront progressivement :
+- [Virtualisation — VMware ESXi 8](virtualisation.md) : machines virtuelles, commutateurs virtuels, VLAN et stockage ;
+- [Réseau et sécurité — OPNsense](reseau-securite.md) : routage, segmentation et filtrage ;
+- [Active Directory et intégration Linux](active-directory.md) : identité, authentification et délégation des droits ;
+- [VPN WireGuard — administration distante et liaison Azure](vpn-wireguard.md) : accès distants et tunnel vers Azure.
 
-- la configuration de la virtualisation et des réseaux virtuels ;
-- les règles réseau, le pare-feu et les tunnels VPN ;
-- l'intégration Linux à Active Directory ;
-- les playbooks et scripts d'automatisation ;
-- la supervision ;
-- les sauvegardes et les tests de restauration ;
-- la connectivité Azure ;
-- les incidents rencontrés et leur résolution.
+Les documentations sur Ansible, Rundeck, Centreon, Veeam, les opérations de reprise et les ressources Azure seront ajoutées progressivement.

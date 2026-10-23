@@ -1,4 +1,4 @@
-# Réseau et sécurité — OPNsense et WireGuard
+# Réseau et sécurité — OPNsense
 
 ## 1. Rôle d'OPNsense
 
@@ -10,7 +10,13 @@ Les réseaux internes sont organisés selon les fonctions des machines : Active 
 
 Leur répartition et leur configuration dans ESXi sont présentées dans les documents [Architecture](architecture.md) et [Virtualisation](virtualisation.md).
 
-Ce document se concentre sur le filtrage réseau, les accès VPN et les problèmes rencontrés lors de leur configuration.
+Ce document se concentre sur le routage et le filtrage réseau, ainsi que sur les incidents rencontrés. Les tunnels sont détaillés dans [VPN WireGuard](vpn-wireguard.md).
+
+### Pourquoi un pare-feu virtuel OPNsense ?
+
+Le réseau interne repose sur un vSwitch ESXi sans liaison physique directe. J'avais besoin d'un équipement assurant le routage entre les zones, le NAT, le filtrage et la terminaison des VPN, sans matériel réseau supplémentaire. J'ai retenu OPNsense pour centraliser ces fonctions dans une machine virtuelle. pfSense aurait également été envisageable ; je n'ai pas réalisé de benchmark entre les deux solutions.
+
+Cette architecture dépend de la disponibilité de l'hôte ESXi et de l'unique VM OPNsense.
 
 ## 2. Filtrage inter-VLAN
 
@@ -114,55 +120,15 @@ Les connexions interdites étaient bloquées, tandis que les communications néc
 
 Cet incident m'a conduit à vérifier systématiquement la portée, l'ordre d'évaluation et les compteurs des règles réellement chargées dans le pare-feu, plutôt que de me fier uniquement à leur affichage dans l'interface web.
 
-## 4. Accès distant avec WireGuard
+## 4. Connexions VPN
 
-J'ai déployé WireGuard sur OPNsense pour administrer le lab à distance, sans exposer directement les interfaces d'administration sur Internet.
+OPNsense termine deux instances WireGuard distinctes : `wg-lab` pour les postes d'administration (`pc-perso` et `pc-2`), et `wg-azure` pour la liaison site-à-site avec une VM Ubuntu sur Microsoft Azure.
 
-Le trafic passe par la Freebox, qui redirige les connexions VPN vers l'interface WAN d'OPNsense. Une fois le tunnel établi, les règles du pare-feu déterminent les réseaux internes accessibles.
+Chaque tunnel dispose de son propre adressage. Les règles OPNsense continuent de filtrer les communications vers les VLAN, même lorsque le tunnel VPN est établi.
 
-J'utilise deux **peers WireGuard**, un pour chaque poste d'administration. Chaque peer possède sa propre paire de clés et son adresse IP de tunnel.
+La configuration, les `Allowed IPs`, les tests et les incidents sont présentés dans [VPN WireGuard — Administration distante et liaison Azure](vpn-wireguard.md). La configuration propre aux ressources cloud sera abordée dans une future documentation Azure.
 
-### Incident : chevauchement des Allowed IPs
-
-Lors de l'ajout des VLAN aux réseaux accessibles par VPN, j'ai rencontré un problème de connectivité lié à la configuration des `Allowed IPs`.
-
-Les deux peers côté OPNsense partageaient les mêmes réseaux internes dans leur configuration. Ce chevauchement provoquait un conflit d'association des routes aux peers.
-
-### Diagnostic
-
-J'ai procédé par étapes :
-
-- vérification du **handshake** WireGuard ;
-- capture du trafic UDP entrant sur l'interface WAN ;
-- contrôle du trafic sur l'interface WireGuard ;
-- consultation de l'état des peers avec `wg show` ;
-- comparaison avec la configuration enregistrée dans OPNsense.
-
-La commande `wg show` affichait notamment `allowed ips: (none)` pour un peer, alors que des réseaux étaient définis dans l'interface de configuration.
-
-### Correction
-
-J'ai corrigé les `Allowed IPs` côté OPNsense en attribuant à chaque peer uniquement son adresse de tunnel en `/32`.
-
-Les réseaux internes à joindre par le VPN restent définis dans les `Allowed IPs` des clients.
-
-Cette séparation évite le chevauchement entre les peers. Les règles du pare-feu OPNsense continuent de contrôler les flux autorisés vers les différents VLAN.
-
-Les deux postes conservent ainsi une configuration VPN indépendante, avec leur propre identité cryptographique.
-
-## 5. Liaison avec Microsoft Azure
-
-J'ai également mis en place un tunnel WireGuard site-à-site entre OPNsense et une machine virtuelle Ubuntu hébergée dans Microsoft Azure.
-
-Ce tunnel est distinct du VPN utilisé pour les postes d'administration.
-
-Il permet d'établir des communications entre l'infrastructure locale et la machine Azure, selon les routes et les règles de filtrage configurées.
-
-L'administration de la VM Azure s'effectue à travers le VPN, sans exposition directe du service SSH sur Internet.
-
-Les détails de la configuration Azure seront présentés dans `docs/cloud-azure.md`.
-
-## 6. Vérifications et outils de diagnostic
+## 5. Vérifications et outils de diagnostic
 
 Pour diagnostiquer les problèmes réseau et vérifier les configurations, j'ai utilisé plusieurs outils.
 
@@ -177,7 +143,7 @@ Pour diagnostiquer les problèmes réseau et vérifier les configurations, j'ai 
 
 Les tests portent autant sur les communications autorisées que sur celles qui doivent être bloquées.
 
-## 7. Captures d'écran
+## 6. Captures d'écran
 
 Ces captures présentent la configuration du lab au moment de leur réalisation. Cliquez sur une miniature pour ouvrir l'image complète.
 
@@ -185,11 +151,8 @@ Ces captures présentent la configuration du lab au moment de leur réalisation.
 | :---: | :---: |
 | [<img src="../images/opnsense/interfaces-vlan.png" width="320" alt="Interfaces VLAN OPNsense">](../images/opnsense/interfaces-vlan.png) | [<img src="../images/opnsense/regles-pare-feu.png" width="320" alt="Règles de filtrage OPNsense">](../images/opnsense/regles-pare-feu.png) |
 
-| Peers WireGuard | Statut WireGuard |
-| :---: | :---: |
-| [<img src="../images/opnsense/peers-wireguard.png" width="320" alt="Peers WireGuard">](../images/opnsense/peers-wireguard.png) | [<img src="../images/opnsense/statut-wireguard.png" width="320" alt="État des tunnels WireGuard">](../images/opnsense/statut-wireguard.png) |
 
-## 8. Limites et évolutions prévues
+## 7. Limites et évolutions prévues
 
 ### Limites actuelles
 

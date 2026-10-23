@@ -6,7 +6,7 @@ J'ai installé VMware ESXi 8 directement sur un Dell Latitude 5490 dédié à mo
 
 ### Pourquoi ESXi en bare-metal ?
 
-J'ai préféré installer l'hyperviseur directement sur un Dell Latitude 5490 dédié plutôt que d'utiliser une virtualisation imbriquée sur mon poste principal. Ce choix me permet d'administrer un véritable hyperviseur et ses commutateurs virtuels, tout en laissant mon PC disponible pour piloter le lab.
+ESXi a été installé directement sur le Dell plutôt qu'en virtualisation imbriquée sur le PC principal. Cela permet d'administrer l'hyperviseur et ses commutateurs virtuels tout en conservant le PC pour piloter le lab.
 
 Ce choix implique un point de défaillance unique et des ressources matérielles limitées : il s'agit d'un environnement d'apprentissage, et non d'une plateforme de production.
 
@@ -74,7 +74,7 @@ Les captures de l'interface ESXi permettent de vérifier :
 - les groupes de ports associés aux VLAN 10, 20, 30 et 40 ;
 - la configuration du groupe de ports d'OPNsense avec le VLAN ID `4095`.
 
-Les tests de connectivité, de routage et de filtrage seront détaillés dans `docs/reseau-securite.md`.
+Les tests de routage et de filtrage sont détaillés dans [Réseau et sécurité — OPNsense](reseau-securite.md).
 
 ## 6. Limites
 

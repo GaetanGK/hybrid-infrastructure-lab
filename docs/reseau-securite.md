@@ -2,7 +2,7 @@
 
 ## 1. Rôle d'OPNsense
 
-J'utilise OPNsense comme routeur et pare-feu principal de mon infrastructure.
+OPNsense assure le routage et le filtrage réseau du lab.
 
 Il assure le routage inter-VLAN, le NAT sortant vers Internet et la terminaison des tunnels WireGuard.
 
@@ -10,7 +10,7 @@ Les réseaux internes sont organisés selon les fonctions des machines : Active 
 
 Leur répartition et leur configuration dans ESXi sont présentées dans les documents [Architecture](architecture.md) et [Virtualisation](virtualisation.md).
 
-Ce document se concentre sur le routage et le filtrage réseau, ainsi que sur les incidents rencontrés. Les tunnels sont détaillés dans [VPN WireGuard](vpn-wireguard.md).
+Ce document présente le routage, le filtrage et les incidents rencontrés. Les tunnels sont détaillés dans [VPN WireGuard](vpn-wireguard.md).
 
 ### Pourquoi un pare-feu virtuel OPNsense ?
 
@@ -126,11 +126,11 @@ OPNsense termine deux instances WireGuard distinctes : `wg-lab` pour les postes 
 
 Chaque tunnel dispose de son propre adressage. Les règles OPNsense continuent de filtrer les communications vers les VLAN, même lorsque le tunnel VPN est établi.
 
-La configuration, les `Allowed IPs`, les tests et les incidents sont présentés dans [VPN WireGuard — Administration distante et liaison Azure](vpn-wireguard.md). La configuration propre aux ressources cloud sera abordée dans une future documentation Azure.
+La configuration, les `Allowed IPs`, les tests et les incidents sont présentés dans [VPN WireGuard — Administration distante et liaison Azure](vpn-wireguard.md). Le déploiement de la VM et les règles NSG sont détaillés dans [Microsoft Azure — Déploiement et sécurisation](cloud-azure.md).
 
 ## 5. Vérifications et outils de diagnostic
 
-Pour diagnostiquer les problèmes réseau et vérifier les configurations, j'ai utilisé plusieurs outils.
+Les outils suivants ont été utilisés pour les tests et les diagnostics réseau.
 
 | Outil / commande | Utilisation |
 | --- | --- |

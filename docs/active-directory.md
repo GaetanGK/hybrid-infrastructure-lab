@@ -6,7 +6,7 @@ J'ai installé Active Directory Domain Services (AD DS) et DNS sur Windows Serve
 
 ### Pourquoi intégrer Linux à Active Directory ?
 
-J'ai choisi d'utiliser une même source d'identités pour les machines Windows et Linux du lab. Cela m'a permis de tester la résolution des comptes AD avec SSSD, le contrôle de l'accès SSH par groupe et la délégation de `sudo`, plutôt que de gérer séparément les comptes d'administration de chaque serveur. La désactivation d'un compte AD a également été testée sur les nouvelles connexions SSH. Des comptes locaux de secours restent indépendants de l'annuaire.
+Active Directory sert de source d'identités commune aux systèmes Windows et Linux du lab. L'intégration avec SSSD permet de tester les connexions SSH par compte AD, le contrôle des accès par groupe et les droits `sudo`. La désactivation d'un compte AD a également été testée sur de nouvelles connexions SSH. Des comptes locaux de secours sont conservés.
 
 | Machine | Rôle |
 | --- | --- |
@@ -193,7 +193,7 @@ Les sauvegardes et la restauration du contrôleur de domaine seront détaillées
 
 ## 8. Captures d'écran
 
-Les captures montrent l'état de la configuration au moment de leur réalisation. Cliquez sur une miniature pour ouvrir l'image complète.
+Les captures montrent l'organisation de l'annuaire et les tests d'authentification. Les miniatures ouvrent les images complètes.
 
 | Organisation des OU | Groupe `linux-admins` |
 | :---: | :---: |

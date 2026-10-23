@@ -2,13 +2,13 @@
 
 ## 1. Objectifs
 
-J'ai déployé WireGuard pour deux besoins distincts : administrer le homelab à distance depuis mes postes Windows et établir une liaison privée avec une machine Ubuntu hébergée sur Microsoft Azure. Les tunnels se terminent sur OPNsense, qui reste chargé du filtrage des communications vers les VLAN du lab.
+WireGuard est utilisé pour administrer le lab à distance depuis deux postes Windows et pour relier le réseau local à une VM Ubuntu sur Azure. Les deux tunnels se terminent sur OPNsense, qui filtre les communications vers les VLAN.
 
-Le réseau interne, le routage inter-VLAN et les règles générales du pare-feu sont détaillés dans [Réseau et sécurité — OPNsense](reseau-securite.md). La configuration des ressources Azure sera détaillée dans une prochaine documentation dédiée au cloud.
+Le réseau interne, le routage inter-VLAN et les règles générales du pare-feu sont détaillés dans [Réseau et sécurité — OPNsense](reseau-securite.md). Le déploiement de la VM, le NSG et les coûts sont détaillés dans [Microsoft Azure — Déploiement et sécurisation](cloud-azure.md).
 
 ## 2. Pourquoi WireGuard ?
 
-Plusieurs technologies auraient pu répondre à ces besoins. Je n'ai pas réalisé de benchmark comparatif : j'ai retenu une solution compatible avec mon infrastructure et adaptée à la taille du lab.
+WireGuard a été retenu pour sa configuration légère et sa compatibilité avec OPNsense, Windows et Ubuntu. Les autres solutions du tableau n'ont pas fait l'objet de tests comparatifs.
 
 | Solution envisageable | Intérêt pour le projet | Compromis |
 | --- | --- | --- |
@@ -80,9 +80,9 @@ Le tunnel Azure est resté indisponible pendant environ vingt heures. Depuis `ct
 
 J'ai contrôlé l'état de la VM et du service WireGuard côté Azure, ainsi que la présence de la règle NSG UDP 51821. Ces éléments étaient en place. La comparaison de l'état des deux extrémités a orienté le diagnostic vers la connectivité amont.
 
-La cause réelle était la désactivation du partage de connexion utilisé pour donner Internet au lab pendant cette période. Dès le rétablissement de cette connexion, le tunnel initié par OPNsense a pu se reformer.
+Pendant cette période, l’hôte ESXi était relié par Ethernet au PC de travail, et non directement à la Freebox. Ce PC disposait d’un accès Internet, mais le partage de connexion Windows (NAT) n’était pas activé sur la carte Ethernet reliée au Dell. OPNsense n’avait donc plus de sortie Internet pour initier le tunnel Azure. Après activation du partage de connexion, le tunnel s’est rétabli. L’hôte a ensuite été rebranché directement à la Freebox, conformément à l’architecture actuelle.
 
-La leçon : avant de modifier les règles VPN, vérifier la connectivité IP de base, puis examiner les handshakes et les endpoints sur **les deux extrémités**.
+Le diagnostic commence par la vérification de l'accès Internet d'OPNsense. Les handshakes et les endpoints sont ensuite contrôlés sur les deux extrémités du tunnel.
 
 ## 8. Diagnostic et limites
 
@@ -94,7 +94,7 @@ La leçon : avant de modifier les règles VPN, vérifier la connectivité IP de 
 | Journaux et règles OPNsense | Flux autorisés ou bloqués |
 | Contrôles Azure | État de la VM, du service VPN et des règles NSG |
 
-Les tunnels dépendent d'une unique VM OPNsense et de la disponibilité du Dell ESXi. La liaison Azure dépend également de la sortie Internet du lab. Les clés privées WireGuard, configurations complètes contenant des secrets et adresses d'accès sensibles ne sont pas publiées.
+Les tunnels dépendent d'une unique VM OPNsense et de la disponibilité du Dell ESXi. La liaison Azure dépend également de la sortie Internet du lab. Les clés privées et les fichiers de configuration contenant des secrets restent hors du dépôt.
 
 ## 9. Captures d'écran
 
@@ -108,6 +108,6 @@ Ces captures sont issues de l'interface OPNsense et montrent les configurations 
 | :---: |
 | [<img src="../images/wireguard/connectivite-azure.png" width="650" alt="Ping sans perte et session SSH vers azure-vm-01 via WireGuard">](../images/wireguard/connectivite-azure.png) |
 
-Le 22 octobre 2026, depuis `ctrl-ansible`, le test `ping -c 4 10.20.20.1` a obtenu 4 réponses sur 4 (0 % de perte, latence moyenne 159,526 ms). La connexion `ssh azureadmin@10.20.20.1` a réussi et les commandes exécutées à distance ont confirmé `hostname` = `azure-vm-01`, `whoami` = `azureadmin` et `wg0` = `10.20.20.1/24`. Le message d’accueil Ubuntu a été omis de la capture composite ; les résultats affichés sont ceux de la capture originale.
+Depuis `ctrl-ansible`, le test `ping -c 4 10.20.20.1` a obtenu 4 réponses sur 4 (0 % de perte, latence moyenne 159,526 ms). La connexion `ssh azureadmin@10.20.20.1` a réussi et les commandes exécutées à distance ont confirmé `hostname` = `azure-vm-01`, `whoami` = `azureadmin` et `wg0` = `10.20.20.1/24`. Le message d’accueil Ubuntu a été omis de la capture composite ; les résultats affichés sont ceux de la capture originale.
 
-Ces tests établissent l’accès privé via le tunnel. Ils ne prouvent pas à eux seuls que l’accès SSH public est fermé : ce dernier point relève de la configuration NSG à présenter dans la documentation Azure.
+Ces tests établissent l’accès privé via le tunnel. Ils ne prouvent pas à eux seuls que l’accès SSH public est fermé : le filtrage SSH public est détaillé dans la [documentation Azure](cloud-azure.md).

@@ -88,8 +88,9 @@ flowchart TB
 - [Réseau et sécurité — OPNsense](docs/reseau-securite.md)
 - [Active Directory et intégration Linux](docs/active-directory.md)
 - [VPN WireGuard — administration distante et liaison Azure](docs/vpn-wireguard.md)
+- [Microsoft Azure — déploiement et sécurisation](docs/cloud-azure.md)
 
-Les autres volets techniques seront ajoutés progressivement : Azure, Ansible, Rundeck, Centreon, Veeam et la procédure de reprise du contrôleur de domaine.
+Les autres volets techniques seront ajoutés progressivement : Ansible, Rundeck, Centreon, Veeam et la procédure de reprise du contrôleur de domaine.
 
 ## Test de reprise du contrôleur de domaine
 
@@ -110,7 +111,7 @@ Les fichiers actuellement publiés sont organisés dans les dossiers suivants :
 
 La structure sera enrichie progressivement avec des définitions de jobs Rundeck, des procédures de reprise dans `runbooks/` et, si nécessaire, des schémas complémentaires dans `diagrams/`.
 
-Les informations sensibles, clés, identifiants et adresses publiques ne sont pas publiés.
+Les captures et extraits de configuration sont vérifiés avant publication pour éviter d'exposer des identifiants ou des secrets.
 
 ---
 
@@ -146,4 +147,4 @@ The repository currently contains technical documentation (`docs/`), real screen
 
 Additional documentation and operational resources, including Rundeck job definitions and recovery runbooks, will be added progressively. Detailed technical documentation is written in French.
 
-This is a **personal lab**, not a production environment. Configurations and examples are reviewed to avoid publishing credentials or sensitive access details.
+This is a **personal lab**, not a production environment. Screenshots and configuration excerpts are checked before publication to avoid exposing credentials or secrets.

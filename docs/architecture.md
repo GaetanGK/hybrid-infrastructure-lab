@@ -2,7 +2,7 @@
 
 ## 1. Vue d'ensemble
 
-Mon infrastructure repose sur un **Dell Latitude 5490 dédié**, sur lequel j'ai installé **VMware ESXi 8 directement sur le matériel**.
+L'infrastructure repose sur un **Dell Latitude 5490 dédié**, avec **VMware ESXi 8 installé directement sur le matériel**.
 
 L'environnement regroupe des machines virtuelles Windows Server et Ubuntu Server, réparties sur plusieurs réseaux virtuels. Une machine virtuelle OPNsense assure le routage, le filtrage entre les VLAN et les connexions VPN.
 
@@ -57,7 +57,7 @@ J'ai organisé les machines virtuelles en quatre VLAN afin de séparer les fonct
 | 30 | Supervision et sauvegarde | Centreon, Veeam Backup & Replication |
 | 40 | Administration | Ansible, Rundeck |
 
-Le réseau interne est organisé en quatre VLAN, chacun correspondant à un ensemble de services. Leurs communications passent par OPNsense, qui applique les règles de filtrage entre les zones.
+Les communications entre ces VLAN passent par OPNsense, qui applique les règles de filtrage entre les zones.
 
 Le plan d'adressage, les protocoles et les règles de pare-feu sont détaillés dans [Réseau et sécurité — OPNsense](reseau-securite.md).
 
@@ -130,7 +130,7 @@ Elle communique avec l'infrastructure locale au moyen d'un **tunnel WireGuard si
 
 Cette liaison permet de tester des communications entre l'environnement virtualisé local et une ressource hébergée dans le cloud.
 
-L'accès SSH public direct à la machine Azure est fermé ; son administration s'effectue par la connectivité VPN prévue à cet effet.
+L'accès SSH public direct à la machine Azure est fermé ; son administration s'effectue par la connectivité VPN prévue à cet effet. Les ressources Azure, le NSG et le suivi des coûts sont détaillés dans [Microsoft Azure — Déploiement et sécurisation](cloud-azure.md).
 
 ## 6. Accès d'administration à distance
 
@@ -172,13 +172,14 @@ Les différents composants ont été vérifiés à travers des tests de connecti
 
 Les documents du dépôt présentent les configurations mises en œuvre, les commandes utilisées pour les vérifier et les résultats observés.
 
-Les scripts, extraits de configuration et captures d'écran sont sélectionnés pour illustrer les opérations réellement effectuées sur le lab.
+Les scripts, extraits de configuration et captures présentés correspondent aux configurations et aux tests du lab.
 
 ## 10. Documentation associée
 
 - [Virtualisation — VMware ESXi 8](virtualisation.md) : machines virtuelles, commutateurs virtuels, VLAN et stockage ;
 - [Réseau et sécurité — OPNsense](reseau-securite.md) : routage, segmentation et filtrage ;
 - [Active Directory et intégration Linux](active-directory.md) : identité, authentification et délégation des droits ;
-- [VPN WireGuard — administration distante et liaison Azure](vpn-wireguard.md) : accès distants et tunnel vers Azure.
+- [VPN WireGuard — administration distante et liaison Azure](vpn-wireguard.md) : accès distants et tunnel vers Azure ;
+- [Microsoft Azure — déploiement et sécurisation](cloud-azure.md) : VM Ubuntu, réseau, NSG et coûts.
 
-Les documentations sur Ansible, Rundeck, Centreon, Veeam, les opérations de reprise et les ressources Azure seront ajoutées progressivement.
+Les documentations sur Ansible, Rundeck, Centreon, Veeam et les opérations de reprise seront ajoutées progressivement.

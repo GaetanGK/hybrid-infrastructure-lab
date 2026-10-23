@@ -116,7 +116,7 @@ $ ip -br addr show wg0
 wg0 UNKNOWN 10.20.20.1/24
 ```
 
-La [capture réelle du test SSH](../images/wireguard/connectivite-azure.png) est déjà intégrée à la documentation WireGuard. Elle n'est pas dupliquée dans ce document.
+Le [test SSH et ping depuis `ctrl-ansible`](../images/wireguard/connectivite-azure.png) montre l’accès privé à la VM Azure.
 
 ## 8. Administration de secours
 

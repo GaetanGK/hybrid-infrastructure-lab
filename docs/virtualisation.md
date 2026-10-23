@@ -82,7 +82,7 @@ L'environnement repose sur un seul hôte ESXi, sans haute disponibilité.
 
 Une panne matérielle complète entraîne l'indisponibilité des machines virtuelles locales.
 
-Les sauvegardes et les tests de restauration sont traités séparément dans la documentation Veeam et PRA.
+Le dépôt de sauvegarde est placé sur un second support, mais reste dans le même équipement physique.
 
 ## Captures d'écran
 

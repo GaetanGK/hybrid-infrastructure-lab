@@ -94,7 +94,7 @@ Le diagnostic commence par la vérification de l'accès Internet d'OPNsense. Les
 | Journaux et règles OPNsense | Flux autorisés ou bloqués |
 | Contrôles Azure | État de la VM, du service VPN et des règles NSG |
 
-Les tunnels dépendent d'une unique VM OPNsense et de la disponibilité du Dell ESXi. La liaison Azure dépend également de la sortie Internet du lab. Les clés privées et les fichiers de configuration contenant des secrets restent hors du dépôt.
+Les tunnels dépendent d'une unique VM OPNsense et de la disponibilité du Dell ESXi. La liaison Azure dépend également de la sortie Internet du lab.
 
 ## 9. Captures d'écran
 
@@ -108,6 +108,6 @@ Ces captures sont issues de l'interface OPNsense et montrent les configurations 
 | :---: |
 | [<img src="../images/wireguard/connectivite-azure.png" width="650" alt="Ping sans perte et session SSH vers azure-vm-01 via WireGuard">](../images/wireguard/connectivite-azure.png) |
 
-Depuis `ctrl-ansible`, le test `ping -c 4 10.20.20.1` a obtenu 4 réponses sur 4 (0 % de perte, latence moyenne 159,526 ms). La connexion `ssh azureadmin@10.20.20.1` a réussi et les commandes exécutées à distance ont confirmé `hostname` = `azure-vm-01`, `whoami` = `azureadmin` et `wg0` = `10.20.20.1/24`. Le message d’accueil Ubuntu a été omis de la capture composite ; les résultats affichés sont ceux de la capture originale.
+Depuis `ctrl-ansible`, le test `ping -c 4 10.20.20.1` a obtenu 4 réponses sur 4 (0 % de perte, latence moyenne 159,526 ms). La connexion `ssh azureadmin@10.20.20.1` a réussi et les commandes exécutées à distance ont confirmé `hostname` = `azure-vm-01`, `whoami` = `azureadmin` et `wg0` = `10.20.20.1/24`.
 
 Ces tests établissent l’accès privé via le tunnel. Ils ne prouvent pas à eux seuls que l’accès SSH public est fermé : le filtrage SSH public est détaillé dans la [documentation Azure](cloud-azure.md).

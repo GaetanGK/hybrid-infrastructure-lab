@@ -170,10 +170,6 @@ Ces contraintes font partie des éléments pris en compte dans l'organisation et
 
 Les différents composants ont été vérifiés à travers des tests de connectivité, d'authentification, d'administration et de restauration.
 
-Les documents du dépôt présentent les configurations mises en œuvre, les commandes utilisées pour les vérifier et les résultats observés.
-
-Les scripts, extraits de configuration et captures présentés correspondent aux configurations et aux tests du lab.
-
 ## 10. Documentation associée
 
 - [Virtualisation — VMware ESXi 8](virtualisation.md) : machines virtuelles, commutateurs virtuels, VLAN et stockage ;
@@ -182,4 +178,6 @@ Les scripts, extraits de configuration et captures présentés correspondent aux
 - [VPN WireGuard — administration distante et liaison Azure](vpn-wireguard.md) : accès distants et tunnel vers Azure ;
 - [Microsoft Azure — déploiement et sécurisation](cloud-azure.md) : VM Ubuntu, réseau, NSG et coûts.
 
-Les documentations sur Ansible, Rundeck, Centreon, Veeam et les opérations de reprise seront ajoutées progressivement.
+- [Automatisation — Ansible](ansible.md) : intégration des serveurs Linux à Active Directory ;
+- [Orchestration — Rundeck](rundeck.md) : administration depuis le VLAN 40 ;
+- [Supervision — Centreon](centreon.md) : surveillance des hôtes et des services.

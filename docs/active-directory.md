@@ -189,8 +189,6 @@ Les comptes de service locaux et un compte administrateur local de secours reste
 
 Le suffixe `homelab.local` a nécessité un domaine de recherche explicite sur les interfaces Ubuntu. Ce n'est pas une recommandation générale d'utiliser `.local` pour un nouveau domaine : il s'agit de la configuration réellement déployée et du correctif appliqué.
 
-Les sauvegardes et la restauration du contrôleur de domaine seront détaillées séparément.
-
 ## 8. Captures d'écran
 
 Les captures montrent l'organisation de l'annuaire et les tests d'authentification. Les miniatures ouvrent les images complètes.

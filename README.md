@@ -89,16 +89,15 @@ flowchart TB
 - [Active Directory et intégration Linux](docs/active-directory.md)
 - [VPN WireGuard — administration distante et liaison Azure](docs/vpn-wireguard.md)
 - [Microsoft Azure — déploiement et sécurisation](docs/cloud-azure.md)
-
-Les autres volets techniques seront ajoutés progressivement : Ansible, Rundeck, Centreon, Veeam et la procédure de reprise du contrôleur de domaine.
+- [Automatisation — Ansible](docs/ansible.md)
+- [Orchestration — Rundeck](docs/rundeck.md)
+- [Supervision — Centreon](docs/centreon.md)
 
 ## Test de reprise du contrôleur de domaine
 
 J'ai simulé l'indisponibilité du contrôleur de domaine puis restauré sa sauvegarde sur une nouvelle machine virtuelle avec Veeam. Après le redémarrage, j'ai vérifié les services Active Directory et DNS, puis l'authentification d'un compte du domaine sur un serveur Linux et ses droits `sudo`.
 
 Un nouveau test chronométré est prévu pour distinguer le temps de restauration, les vérifications de services et la durée totale d’indisponibilité. Aucun objectif de temps de reprise (RTO) n’est annoncé à ce stade.
-
-La procédure détaillée sera publiée dans `runbooks/reprise-controleur-domaine.md` après anonymisation.
 
 ## Organisation du dépôt
 
@@ -108,10 +107,6 @@ Les fichiers actuellement publiés sont organisés dans les dossiers suivants :
 - `images/` : captures d'écran réelles sélectionnées pour illustrer les configurations et les tests ;
 - `ansible/` : playbooks d'automatisation ;
 - `powershell/` : scripts d'administration Windows et Active Directory.
-
-La structure sera enrichie progressivement avec des définitions de jobs Rundeck, des procédures de reprise dans `runbooks/` et, si nécessaire, des schémas complémentaires dans `diagrams/`.
-
-Les captures et extraits de configuration sont vérifiés avant publication pour éviter d'exposer des identifiants ou des secrets.
 
 ---
 
@@ -145,6 +140,4 @@ A new timed recovery test is planned to distinguish the technical restoration ti
 
 The repository currently contains technical documentation (`docs/`), real screenshots (`images/`), Ansible playbooks (`ansible/`) and PowerShell administration scripts (`powershell/`).
 
-Additional documentation and operational resources, including Rundeck job definitions and recovery runbooks, will be added progressively. Detailed technical documentation is written in French.
-
-This is a **personal lab**, not a production environment. Screenshots and configuration excerpts are checked before publication to avoid exposing credentials or secrets.
+Detailed technical documentation is written in French. This is a **personal lab**, not a production environment.

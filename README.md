@@ -92,21 +92,22 @@ flowchart TB
 - [Automatisation — Ansible](docs/ansible.md)
 - [Orchestration — Rundeck](docs/rundeck.md)
 - [Supervision — Centreon](docs/centreon.md)
+- [Sauvegardes — Veeam](docs/veeam.md)
+- [PRA — Restauration du contrôleur de domaine](runbooks/reprise-controleur-domaine.md)
 
 ## Test de reprise du contrôleur de domaine
 
 J'ai simulé l'indisponibilité du contrôleur de domaine puis restauré sa sauvegarde sur une nouvelle machine virtuelle avec Veeam. Après le redémarrage, j'ai vérifié les services Active Directory et DNS, puis l'authentification d'un compte du domaine sur un serveur Linux et ses droits `sudo`.
 
-Un nouveau test chronométré est prévu pour distinguer le temps de restauration, les vérifications de services et la durée totale d’indisponibilité. Aucun objectif de temps de reprise (RTO) n’est annoncé à ce stade.
-
 ## Organisation du dépôt
 
-Les fichiers actuellement publiés sont organisés dans les dossiers suivants :
+Le dépôt est organisé dans les dossiers suivants :
 
 - `docs/` : documentation technique de l'architecture et des services ;
 - `images/` : captures d'écran réelles sélectionnées pour illustrer les configurations et les tests ;
 - `ansible/` : playbooks d'automatisation ;
 - `powershell/` : scripts d'administration Windows et Active Directory.
+- `runbooks/` : procédures de reprise et de maintenance.
 
 ---
 
@@ -133,8 +134,6 @@ The internal network is divided into **four VLANs**. OPNsense provides routing, 
 ### Domain controller recovery test
 
 I simulated a domain controller outage and restored its backup to a new virtual machine using Veeam. I then checked Active Directory and DNS services and confirmed that a domain account could authenticate on a Linux server with working `sudo` permissions.
-
-A new timed recovery test is planned to distinguish the technical restoration time, service validation time and overall outage duration. No recovery time objective (RTO) is claimed at this stage.
 
 ### Repository contents
 

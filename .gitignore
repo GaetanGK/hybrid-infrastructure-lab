@@ -1,0 +1,28 @@
+# Secrets et identifiants : ne jamais les publier
+.vault_pass*
+*vault*.txt
+*.pem
+*.key
+*.ppk
+id_rsa*
+id_ed25519*
+*.conf.wg
+wg*.conf
+.env
+*.env
+
+# Ansible
+*.retry
+.ansible/
+
+# Systèmes et éditeurs
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# Journaux et fichiers temporaires
+*.log
+*.tmp

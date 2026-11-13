@@ -99,6 +99,10 @@ flowchart TB
 
 J'ai simulé l'indisponibilité du contrôleur de domaine puis restauré sa sauvegarde sur une nouvelle machine virtuelle avec Veeam. Après le redémarrage, j'ai vérifié les services Active Directory et DNS, puis l'authentification d'un compte du domaine sur un serveur Linux et ses droits `sudo`.
 
+## Limites connues
+
+Ce lab reste un environnement personnel, avec des limites identifiées : un seul hôte ESXi, un seul contrôleur de domaine et des sauvegardes conservées sur le même hôte physique. Leur traitement fait partie des prochaines étapes. Le détail figure dans [Architecture générale](docs/architecture.md#8-limites-de-larchitecture).
+
 ## Organisation du dépôt
 
 Le dépôt est organisé dans les dossiers suivants :
@@ -106,7 +110,7 @@ Le dépôt est organisé dans les dossiers suivants :
 - `docs/` : documentation technique de l'architecture et des services ;
 - `images/` : captures d'écran réelles sélectionnées pour illustrer les configurations et les tests ;
 - `ansible/` : playbooks d'automatisation ;
-- `powershell/` : scripts d'administration Windows et Active Directory.
+- `powershell/` : scripts d'administration Windows et Active Directory ;
 - `runbooks/` : procédures de reprise et de maintenance.
 
 ---
@@ -137,6 +141,10 @@ I simulated a domain controller outage and restored its backup to a new virtual 
 
 ### Repository contents
 
-The repository currently contains technical documentation (`docs/`), real screenshots (`images/`), Ansible playbooks (`ansible/`) and PowerShell administration scripts (`powershell/`).
+The repository contains technical documentation (`docs/`), real screenshots (`images/`), Ansible playbooks (`ansible/`), PowerShell administration scripts (`powershell/`) and recovery runbooks (`runbooks/`).
+
+### Known limitations
+
+This is a personal lab with known limitations: a single ESXi host, a single domain controller, and backups stored on the same physical host. Addressing them is part of the next steps.
 
 Detailed technical documentation is written in French. This is a **personal lab**, not a production environment.

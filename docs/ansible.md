@@ -65,9 +65,9 @@ Le playbook `configure-ntp.yml`, présent sur `ctrl-ansible`, gère un fichier d
 | Fichier géré | `/etc/systemd/timesyncd.conf.d/homelab.conf` |
 | Application | Handler de redémarrage si le fichier change |
 
-La configuration NTP avait été mise en place manuellement avant ce contrôle. La syntaxe du playbook a été validée avec `--syntax-check`. La commande `--list-hosts` a confirmé les quatre machines ciblées ; leur service `systemd-timesyncd` était actif et leur horloge synchronisée.
+La configuration NTP a été déployée sur les quatre machines par ce playbook. Les contrôles décrits ci-dessous ont été réalisés après ce déploiement initial. La syntaxe du playbook a été validée avec `--syntax-check`. La commande `--list-hosts` a confirmé les quatre machines ciblées ; leur service `systemd-timesyncd` était actif et leur horloge synchronisée.
 
-Le contrôle `--check --diff`, puis **deux exécutions réelles consécutives** du playbook, ont produit les mêmes compteurs sur chaque machine : `ok=3`, `changed=0`, `failed=0`, `unreachable=0`. Aucun redémarrage du service n’a été déclenché. Ces résultats valident le maintien d’une configuration déjà conforme ; ils ne constituent pas un test de déploiement depuis un état vierge.
+Le contrôle `--check --diff`, puis **deux exécutions réelles consécutives** du playbook, ont produit les mêmes compteurs sur chaque machine : `ok=3`, `changed=0`, `failed=0`, `unreachable=0`. Aucun redémarrage du service n’a été déclenché. Ces résultats valident l’idempotence du playbook : une configuration déjà conforme n’est pas modifiée.
 
 Le contrôle `timedatectl timesync-status` a montré que trois machines utilisaient `192.168.10.10` comme source NTP active. `centreon-central` utilisait `ntp.ubuntu.com`, également présent dans sa configuration.
 

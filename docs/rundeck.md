@@ -2,7 +2,7 @@
 
 ## 1. Rôle dans le lab
 
-Rundeck est déployé avec Ansible sur `ctrl-ansible`, dans le VLAN 40. Il fournit une interface pour organiser et déclencher des opérations d'administration.
+Rundeck est installé manuellement sur `ctrl-ansible`, dans le VLAN 40 ; son installation n'est pas automatisée. Il fournit une interface pour organiser et déclencher des opérations d'administration.
 
 Ansible exécute les tâches de configuration sur les machines cibles ; Rundeck permet d'organiser ces opérations sous forme de jobs.
 

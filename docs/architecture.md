@@ -108,7 +108,7 @@ Centreon supervise les principaux systèmes et équipements du lab. Selon les ci
 
 **Veeam**
 
-Veeam Backup & Replication et les agents de sauvegarde assurent la protection de plusieurs machines Windows et Linux.
+Veeam Backup & Replication et les agents de sauvegarde protègent deux machines : le contrôleur de domaine `HOMELAB` (Windows Server 2022) et `srv-lin-01` (Ubuntu).
 
 Un dépôt de sauvegarde est installé sur un support de stockage distinct, mais il reste situé sur **le même équipement physique que l'hyperviseur**. Il ne constitue donc pas une sauvegarde hors site.
 
@@ -162,7 +162,8 @@ Ses principales limites sont :
 - un seul hôte ESXi ;
 - un seul contrôleur de domaine Active Directory ;
 - des sauvegardes conservées localement, sans copie hors site ;
-- une capacité matérielle limitée pour déployer davantage de services simultanément.
+- une capacité matérielle limitée pour déployer davantage de services simultanément ;
+- une horloge de l'hôte ESXi décalée, en cours de correction.
 
 Ces contraintes font partie des éléments pris en compte dans l'organisation et les tests du lab.
 
@@ -176,8 +177,9 @@ Les différents composants ont été vérifiés à travers des tests de connecti
 - [Réseau et sécurité — OPNsense](reseau-securite.md) : routage, segmentation et filtrage ;
 - [Active Directory et intégration Linux](active-directory.md) : identité, authentification et délégation des droits ;
 - [VPN WireGuard — administration distante et liaison Azure](vpn-wireguard.md) : accès distants et tunnel vers Azure ;
-- [Microsoft Azure — déploiement et sécurisation](cloud-azure.md) : VM Ubuntu, réseau, NSG et coûts.
-
+- [Microsoft Azure — déploiement et sécurisation](cloud-azure.md) : VM Ubuntu, réseau, NSG et coûts ;
 - [Automatisation — Ansible](ansible.md) : intégration des serveurs Linux à Active Directory ;
 - [Orchestration — Rundeck](rundeck.md) : administration depuis le VLAN 40 ;
-- [Supervision — Centreon](centreon.md) : surveillance des hôtes et des services.
+- [Supervision — Centreon](centreon.md) : surveillance des hôtes et des services ;
+- [Sauvegardes — Veeam](veeam.md) : sauvegardes des machines et dépôt ;
+- [PRA — Restauration du contrôleur de domaine](../runbooks/reprise-controleur-domaine.md) : procédure et test de reprise.

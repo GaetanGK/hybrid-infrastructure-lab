@@ -96,11 +96,7 @@ Elle s'appliquait donc à un périmètre beaucoup plus large que celui initialem
 
 ### Rétablissement des accès
 
-Pour rétablir temporairement la connectivité, j'ai vidé en mémoire la table d'adresses associée à la règle concernée.
-
-Cette intervention était temporaire : elle ne supprimait pas la règle de la configuration persistante, et un rechargement du pare-feu pouvait rétablir le blocage.
-
-J'ai ensuite supprimé puis recréé les règles concernées.
+Pour rétablir les accès, j'ai supprimé puis recréé les règles concernées, en définissant explicitement leur interface et leur source.
 
 ### Second problème : ordre d'évaluation des règles
 

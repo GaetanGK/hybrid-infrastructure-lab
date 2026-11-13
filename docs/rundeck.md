@@ -23,8 +23,8 @@ Le projet Rundeck `Homelab` contient deux jobs :
 
 | Job | Rôle |
 | --- | --- |
-| `Configuration de base - Ansible` | Lance le playbook `setup-base.yml` sur les serveurs Linux |
-| `Installer check_mem` | Exécute le playbook d’installation du contrôle mémoire `check_mem` |
+| `Configuration de base - Ansible` | Lance le playbook [`setup-base.yml`](../ansible/setup-base.yml) sur les serveurs Linux |
+| `Installer check_mem` | Exécute le playbook [`install-check-mem.yml`](../ansible/install-check-mem.yml) d’installation du contrôle mémoire |
 
 Le job de configuration de base utilise une étape de commande lançant `ansible-playbook` avec l’inventaire de `ctrl-ansible` et une clé SSH. Le workflow est configuré avec la stratégie `Node First` et l’arrêt à l’étape en échec.
 

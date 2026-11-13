@@ -1,0 +1,29 @@
+---
+- name: Configuration de base des serveurs Linux
+  hosts: linux_servers
+  become: yes
+
+  tasks:
+    - name: Mettre à jour le cache des paquets
+      apt:
+        update_cache: yes
+
+    - name: Mettre à niveau tous les paquets
+      apt:
+        upgrade: dist
+
+    - name: Installer des outils de base
+      apt:
+        name:
+          - htop
+          - curl
+          - vim
+        state: present
+
+    - name: Créer un utilisateur standard "devops"
+      user:
+        name: devops
+        shell: /bin/bash
+        groups: sudo
+        append: yes
+        create_home: yes

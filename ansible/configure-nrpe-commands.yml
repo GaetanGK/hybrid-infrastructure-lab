@@ -1,0 +1,28 @@
+---
+- name: Ajouter les commandes de supervision NRPE
+  hosts: linux_servers
+  become: yes
+
+  tasks:
+    - name: Commande check_load
+      lineinfile:
+        path: /etc/nagios/nrpe.cfg
+        line: 'command[check_load]=/usr/lib/nagios/plugins/check_load -w 5,4,3 -c 10,8,6'
+        insertafter: EOF
+
+    - name: Commande check_disk
+      lineinfile:
+        path: /etc/nagios/nrpe.cfg
+        line: 'command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 20% -c 10% -p /'
+        insertafter: EOF
+
+    - name: Commande check_mem (via check_memory si disponible, sinon script simple)
+      lineinfile:
+        path: /etc/nagios/nrpe.cfg
+        line: 'command[check_mem]=/usr/lib/nagios/plugins/check_mem -f -w 20 -c 10'
+        insertafter: EOF
+
+    - name: Redémarrer NRPE
+      systemd:
+        name: nagios-nrpe-server
+        state: restarted

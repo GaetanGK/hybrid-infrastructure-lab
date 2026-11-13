@@ -1,5 +1,6 @@
 ---
 # IAM Linux : jonction d'un serveur à l'Active Directory (realmd + sssd).
+# Version exécutée sur srv-lin-02 depuis ctrl-ansible.
 #
 # Pré-requis (non modifiés par ce playbook, propres à chaque machine) :
 #   - le DNS de la machine pointe vers le contrôleur de domaine ;
@@ -74,9 +75,14 @@
       no_log: true
       when: "'kerberos-member' not in realm_state.stdout"
 
+    - name: Afficher l'erreur de jonction, sans le mot de passe
+      debug:
+        msg: "{{ join_result.stderr_lines | default([]) }}"
+      when: join_result.rc | default(0) != 0
+
     - name: Arrêter si la jonction a échoué
       fail:
-        msg: "La jonction Active Directory a échoué. Vérifier le DNS et les journaux sur la machine cible."
+        msg: "La jonction a échoué : voir le message ci-dessus."
       when: join_result.rc | default(0) != 0
 
     - name: Relire l'état du domaine

@@ -1,0 +1,25 @@
+---
+- name: Installation et configuration de NRPE
+  hosts: linux_servers
+  become: yes
+
+  tasks:
+    - name: Installer NRPE et les plugins Nagios
+      apt:
+        name:
+          - nagios-nrpe-server
+          - nagios-plugins
+        state: present
+        update_cache: yes
+
+    - name: Autoriser le serveur Centreon à interroger NRPE
+      lineinfile:
+        path: /etc/nagios/nrpe.cfg
+        regexp: '^allowed_hosts='
+        line: 'allowed_hosts=127.0.0.1,192.168.30.30'
+
+    - name: Redémarrer le service NRPE
+      systemd:
+        name: nagios-nrpe-server
+        state: restarted
+        enabled: yes

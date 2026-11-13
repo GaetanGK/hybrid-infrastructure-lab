@@ -4,7 +4,7 @@
 
 Centreon est installé dans le VLAN 30, avec les composants de sauvegarde. Il supervise les systèmes Windows et Linux du lab ainsi que des équipements réseau.
 
-Les contrôles utilisent NRPE, NSClient++ ou SNMP selon les machines et les équipements.
+Les contrôles utilisent NRPE, NSClient++ ou SNMP selon les machines et les équipements. Sur les serveurs Linux, l'agent NRPE et ses commandes sont déployés avec Ansible (voir [Automatisation — Ansible](ansible.md#8-playbooks-publiés)).
 
 ## 2. Architecture de supervision
 

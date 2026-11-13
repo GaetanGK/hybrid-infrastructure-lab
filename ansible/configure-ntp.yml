@@ -1,0 +1,26 @@
+---
+- name: Pointer les serveurs Linux vers HOMELAB pour le temps
+  hosts: linux_servers:supervision
+  become: yes
+
+  tasks:
+    - name: Créer le répertoire de configuration
+      file:
+        path: /etc/systemd/timesyncd.conf.d
+        state: directory
+        mode: '0755'
+
+    - name: Source de temps du domaine, avec secours public
+      copy:
+        dest: /etc/systemd/timesyncd.conf.d/homelab.conf
+        content: |
+          [Time]
+          NTP=192.168.10.10 ntp.ubuntu.com
+        mode: '0644'
+      notify: Redémarrer timesyncd
+
+  handlers:
+    - name: Redémarrer timesyncd
+      systemd:
+        name: systemd-timesyncd
+        state: restarted

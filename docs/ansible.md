@@ -54,7 +54,7 @@ Les quatre hôtes `ctrl-ansible`, `centreon-central`, `srv-lin-01` et `srv-lin-0
 
 ## 6. Gestion de la synchronisation horaire
 
-Le playbook `configure-ntp.yml`, présent sur `ctrl-ansible`, gère un fichier de configuration `systemd-timesyncd` sur les groupes `linux_servers` et `supervision` :
+Le playbook [`configure-ntp.yml`](../ansible/configure-ntp.yml) gère un fichier de configuration `systemd-timesyncd` sur les groupes `linux_servers` et `supervision` :
 
 | Paramètre | Valeur |
 | --- | --- |
@@ -79,7 +79,31 @@ Le contrôle `timedatectl timesync-status` a montré que trois machines utilisai
 
 [<img src="../images/ansible/sources-ntp.png" width="650" alt="Contrôle des sources NTP sur les quatre machines Linux">](../images/ansible/sources-ntp.png)
 
-## 8. Périmètre
+## 8. Playbooks publiés
+
+Les playbooks du dossier [`ansible/`](../ansible/) sont les versions exécutées depuis `ctrl-ansible`.
+
+| Playbook | Cibles | Rôle |
+| --- | --- | --- |
+| [`setup-base.yml`](../ansible/setup-base.yml) | `linux_servers` | Mise à jour des paquets, outils de base, compte `devops` |
+| [`iam-linux.yml`](../ansible/iam-linux.yml) | `srv-lin-02` | Jonction à Active Directory et droits `sudo` du groupe `linux-admins` |
+| [`configure-ntp.yml`](../ansible/configure-ntp.yml) | `linux_servers`, `supervision` | Synchronisation horaire sur le contrôleur de domaine |
+| [`install-nrpe.yml`](../ansible/install-nrpe.yml) | `linux_servers` | Installation de l'agent NRPE, accès limité au serveur Centreon |
+| [`configure-nrpe-commands.yml`](../ansible/configure-nrpe-commands.yml) | `linux_servers` | Commandes de supervision : charge, disque, mémoire |
+| [`install-check-mem.yml`](../ansible/install-check-mem.yml) | `linux_servers` | Installation du script de contrôle mémoire `check_mem` |
+
+L'inventaire réel n'est pas publié ; [`inventory.example.ini`](../ansible/inventory.example.ini) en reprend la structure.
+
+## 9. Améliorations identifiées
+
+La relecture des playbooks a mis en évidence plusieurs points à corriger. Ils seront traités, testés dans le lab puis publiés :
+
+- `install-nrpe.yml` et `configure-nrpe-commands.yml` redémarrent NRPE à chaque exécution. Un *handler* limiterait le redémarrage aux cas où la configuration change.
+- `install-check-mem.yml` télécharge le script depuis la branche principale d'un dépôt tiers, sans version figée ni somme de contrôle. Il faudrait fixer une version précise et vérifier son empreinte.
+- `setup-base.yml` met à niveau tous les paquets à chaque exécution, y compris sur `ctrl-ansible`. Les mises à jour relèvent plutôt d'un playbook dédié, lancé de façon planifiée et maîtrisée.
+- `configure-ntp.yml` déclare `ntp.ubuntu.com` comme seconde source. `systemd-timesyncd` peut basculer sur cette source et y rester, ce qui expliquerait le comportement observé sur `centreon-central`. Cette hypothèse reste à vérifier avant de limiter la configuration aux sources du domaine.
+
+## 10. Périmètre
 
 Le playbook `iam-linux.yml` publié cible `srv-lin-02`. Il configure l'intégration AD et les droits associés. La supervision et l'orchestration des opérations sont assurées séparément par Centreon et Rundeck.
 

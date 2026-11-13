@@ -110,7 +110,7 @@ Centreon supervise les principaux systèmes et équipements du lab. Selon les ci
 
 Veeam Backup & Replication et les agents de sauvegarde protègent deux machines : le contrôleur de domaine `HOMELAB` (Windows Server 2022) et `srv-lin-01` (Ubuntu).
 
-Un dépôt de sauvegarde est installé sur un support de stockage distinct, mais il reste situé sur **le même équipement physique que l'hyperviseur**. Il ne constitue donc pas une sauvegarde hors site.
+Un dépôt de sauvegarde est installé sur un support de stockage distinct, mais il reste situé sur **le même équipement physique que l'hyperviseur**. Une copie quotidienne et chiffrée des sauvegardes est envoyée sur le PC d'administration, une machine physique distincte (voir [Sauvegardes — Veeam](veeam.md)).
 
 ### VLAN 40 — Administration et automatisation
 
@@ -161,7 +161,7 @@ Ses principales limites sont :
 
 - un seul hôte ESXi ;
 - un seul contrôleur de domaine Active Directory ;
-- des sauvegardes conservées localement, sans copie hors site ;
+- une copie des sauvegardes sur une autre machine du même site, sans copie hors site ;
 - une capacité matérielle limitée pour déployer davantage de services simultanément ;
 - une horloge de l'hôte ESXi décalée, en cours de correction.
 

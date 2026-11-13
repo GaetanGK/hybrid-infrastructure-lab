@@ -11,8 +11,9 @@ Veeam Backup & Replication est installé sur `veeam-01`, dans le VLAN 30. Les ag
 | Emplacement | Volume `E:`, répertoire `E:\Backup` |
 | Stockage | Disque virtuel hébergé sur `datastore-extension`, sur le second SSD de l'hôte ESXi |
 | Machines protégées dans ce périmètre | `srv-lin-01` (Linux), contrôleur de domaine `HOMELAB` (Windows Server 2022) |
+| Copie hors de l'hôte | Dépôt `Copie-PC-principal` sur le PC d'administration (voir section 6) |
 
-Le dépôt et les machines virtuelles restent sur le même hôte physique. La séparation des disques ne protège donc pas contre une panne complète du Dell Latitude 5490.
+Le dépôt principal et les machines virtuelles restent sur le même hôte physique. Une copie des sauvegardes est donc envoyée sur une autre machine (section 6).
 
 ## 2. Sauvegardes configurées
 
@@ -70,6 +71,72 @@ Les points de restauration visibles et les sessions réussies confirment que les
 | :---: | :---: |
 | [<img src="../images/veeam/session-backup-homelab.png" width="390" alt="Session backup-homelab réussie sans avertissement ni erreur">](../images/veeam/session-backup-homelab.png) | [<img src="../images/veeam/depot-sauvegardes.png" width="390" alt="Sauvegardes complètes et incrémentales sur le volume E">](../images/veeam/depot-sauvegardes.png) |
 
-## 6. Limites
+## 6. Copie des sauvegardes hors de l'hôte (règle 3-2-1)
 
-Le dépôt est local à l'hôte ESXi, sans copie hors site. Une panne du matériel peut donc rendre simultanément indisponibles les VM et leurs sauvegardes. Les sauvegardes quotidiennes ne garantissent pas la conservation des modifications effectuées depuis le dernier point.
+### Objectif
+
+Jusqu'ici, les machines virtuelles et leurs sauvegardes se trouvaient sur le même Dell Latitude 5490. Une panne de l'hôte aurait fait perdre les deux à la fois. Un travail de copie Veeam envoie désormais une seconde copie des sauvegardes vers le PC d'administration, une machine physique distincte.
+
+| Copie | Emplacement | Rôle |
+| --- | --- | --- |
+| Données de production | VM sur l'hôte ESXi | Machines en service |
+| Sauvegarde principale | `E:\Backup` sur `veeam-01` | Restauration rapide |
+| Copie | Partage SMB sur le PC d'administration (`D:\VeeamCopy`) | Survie à une panne de l'hôte |
+
+### Partage de destination et compte de service
+
+Sur le PC d'administration, un compte local dédié `svc-veeam` a été créé pour ce seul usage, selon le principe du moindre privilège :
+
+- le partage `VeeamCopy` n'est accessible qu'à ce compte ;
+- les droits NTFS du dossier sont limités à `svc-veeam` (modification), `Système` et `Administrateurs` ; l'héritage est désactivé ;
+- le mot de passe n'apparaît dans aucun script : il est saisi à l'exécution et stocké dans le gestionnaire d'identifiants de Veeam.
+
+L'accès a d'abord été validé hors de Veeam, depuis `veeam-01`, avec `net use`, pour distinguer un problème de compte d'un problème de configuration Veeam.
+
+### Ouverture du flux sur OPNsense
+
+Le VLAN 30 n'a pas le droit de joindre les réseaux privés. Une règle flottante autorise uniquement le flux nécessaire :
+
+| Champ | Valeur |
+| --- | --- |
+| Action | `Pass`, *Quick* |
+| Source | `veeam-01` (`192.168.30.41`) |
+| Destination | PC d'administration (`192.168.1.47`, bail DHCP réservé sur la box) |
+| Protocole et port | TCP 445 (SMB) |
+
+Le test depuis `veeam-01` montre l'effet de la règle :
+
+| | Ping | `Test-NetConnection -Port 445` |
+| --- | --- | --- |
+| Avant la règle | Réussi | `TcpTestSucceeded : False` |
+| Après la règle | Réussi | `TcpTestSucceeded : True` |
+
+Le ping passait déjà grâce à la règle ICMP de supervision ; seul le port SMB a été ouvert.
+
+### Travail de copie
+
+| Paramètre | Valeur |
+| --- | --- |
+| Dépôt cible | `Copie-PC-principal` (`\\192.168.1.47\VeeamCopy`), une tâche simultanée au maximum |
+| Mode | *Periodic copy* : copie quotidienne à 20 h, quand le PC est allumé |
+| Sources | Sauvegardes de `HOMELAB` et de `srv-lin-01` |
+| Rétention | 7 points de restauration |
+| Chiffrement | Activé : la sauvegarde du contrôleur de domaine contient la base Active Directory |
+
+Le mode *Immediate copy* a été écarté : les sauvegardes s'exécutent à 2 h, une heure où le PC d'administration est généralement éteint.
+
+La première exécution, le 13 novembre 2026, s'est terminée en `Success` pour les deux machines, en environ quatre minutes.
+
+### Limites
+
+- La copie dépend du PC d'administration : s'il est éteint à 20 h, elle est reportée au lendemain.
+- Les deux machines restent dans le même logement : la copie protège d'une panne de l'hôte, pas d'un sinistre sur le site. Une copie vers un stockage objet Azure serait l'étape suivante.
+- Le mot de passe de chiffrement est indispensable à toute restauration depuis cette copie ; il est conservé hors du lab.
+
+| Copies réussies dans Veeam | Règle OPNsense SMB |
+| :---: | :---: |
+| [<img src="../images/veeam/copie-hors-hote-success.png" width="430" alt="Travaux de copie vers le PC principal en Success pour les deux machines">](../images/veeam/copie-hors-hote-success.png) | [<img src="../images/opnsense/regle-smb-veeam-pc.png" width="430" alt="Règle flottante autorisant veeam-01 vers le PC principal sur le port 445">](../images/opnsense/regle-smb-veeam-pc.png) |
+
+## 7. Limites
+
+Le dépôt principal est local à l'hôte ESXi ; la copie vers le PC d'administration couvre une panne de l'hôte, mais pas un sinistre sur le site (les deux machines sont au même endroit). Les sauvegardes quotidiennes ne garantissent pas la conservation des modifications effectuées depuis le dernier point.

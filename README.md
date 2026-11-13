@@ -78,7 +78,7 @@ flowchart TB
 | Identité | Active Directory et DNS sur Windows Server 2022 ; intégration Linux avec `realmd` et `SSSD` |
 | Automatisation | Playbooks Ansible, script PowerShell pour l'annuaire et orchestration Rundeck |
 | Supervision | Centreon, NRPE / NSClient++ et SNMP |
-| Sauvegarde | Veeam, sauvegardes planifiées et points de restauration |
+| Sauvegarde | Veeam, sauvegardes planifiées et copie chiffrée vers une seconde machine |
 | Cloud hybride | VM Linux Azure reliée au lab par un tunnel WireGuard |
 
 ## Documentation technique
@@ -101,7 +101,7 @@ J'ai simulé l'indisponibilité du contrôleur de domaine puis restauré sa sauv
 
 ## Limites connues
 
-Ce lab reste un environnement personnel, avec des limites identifiées : un seul hôte ESXi, un seul contrôleur de domaine et des sauvegardes conservées sur le même hôte physique. Leur traitement fait partie des prochaines étapes. Le détail figure dans [Architecture générale](docs/architecture.md#8-limites-de-larchitecture).
+Ce lab reste un environnement personnel, avec des limites identifiées : un seul hôte ESXi, un seul contrôleur de domaine et une copie des sauvegardes conservée sur le même site. Leur traitement fait partie des prochaines étapes. Le détail figure dans [Architecture générale](docs/architecture.md#8-limites-de-larchitecture).
 
 ## Organisation du dépôt
 
@@ -132,7 +132,7 @@ The internal network is divided into **four VLANs**. OPNsense provides routing, 
 | Identity | Windows Server 2022 Active Directory and DNS; Linux integration through `realmd` and `SSSD` |
 | Automation | Ansible playbooks, PowerShell and Rundeck |
 | Monitoring | Centreon, NRPE / NSClient++ and SNMP |
-| Backup | Veeam scheduled backups and restore points |
+| Backup | Veeam scheduled backups and encrypted copy to a second machine |
 | Hybrid cloud | Azure Linux VM connected through WireGuard |
 
 ### Domain controller recovery test
@@ -145,6 +145,6 @@ The repository contains technical documentation (`docs/`), real screenshots (`im
 
 ### Known limitations
 
-This is a personal lab with known limitations: a single ESXi host, a single domain controller, and backups stored on the same physical host. Addressing them is part of the next steps.
+This is a personal lab with known limitations: a single ESXi host, a single domain controller, and a backup copy kept on the same site. Addressing them is part of the next steps.
 
 Detailed technical documentation is written in French. This is a **personal lab**, not a production environment.
